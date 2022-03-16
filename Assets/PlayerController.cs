@@ -5,36 +5,67 @@ using System;
 
 public class PlayerController : MonoBehaviour
 {
-    public float timeToMove = 1f;
-    private bool isMoving;
+
+    
     private Vector3 origPos, targetPos;
     private BoxCollider2D boxCollider;
-    //[SerializeField] float distance = 3
+
     [SerializeField] private LayerMask colliderlayerMask;
+    [SerializeField] float timeToMove = 1f;
+
+    private bool isMoving;
     private bool LeftCollision;
     private bool RightCollision;
-    // Start is called before the first frame update
     void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         
-        ProcessMovement();  
-        ProcessCollisions();
+        Movement();          // Square Movement
+        ProcessCollisions(); // Checks player collision with another square in the x axis
 
     }
-
     private void ProcessCollisions()
     {
         float extraLenght = .1f;
         RaycastHit2D hitleft = Physics2D.Raycast(boxCollider.bounds.center, Vector2.left, (boxCollider.bounds.extents.y + extraLenght) * 3, colliderlayerMask);
+        // draws a Ray to check for collisions left side of the player
         RaycastHit2D hitright = Physics2D.Raycast(boxCollider.bounds.center, Vector2.right, (boxCollider.bounds.extents.y + extraLenght) * 3, colliderlayerMask);
+        // draws a Ray to check for collisions right side of the player
         Color rayColorLeft;
         Color rayColorRight;
+        ColorRays(extraLenght, ref hitleft, ref hitright, out rayColorLeft, out rayColorRight);
+        CheckRayCollisions(hitleft, hitright);
+    }
+
+    private void CheckRayCollisions(RaycastHit2D hitleft, RaycastHit2D hitright)
+    {
+        if (hitleft.collider != null)
+        {
+            Debug.Log(hitleft.collider.name);
+            LeftCollision = true;
+
+        }
+        else
+        {
+            LeftCollision = false;
+        }
+        if (hitright.collider != null)
+        {
+            Debug.Log(hitright.collider.name);
+            RightCollision = true;
+        }
+        else
+        {
+            RightCollision = false;
+        }
+    }
+
+    private void ColorRays(float extraLenght, ref RaycastHit2D hitleft, ref RaycastHit2D hitright, out Color rayColorLeft, out Color rayColorRight)
+    {
         if (hitleft.collider != null)
         {
             rayColorLeft = Color.yellow;
@@ -55,34 +86,9 @@ public class PlayerController : MonoBehaviour
 
         Debug.DrawRay(transform.position, Vector2.left * (boxCollider.bounds.extents.y + extraLenght) * 2, rayColorLeft);
         Debug.DrawRay(transform.position, Vector2.right * (boxCollider.bounds.extents.y + extraLenght) * 2, rayColorRight);
-
-        if (hitleft.collider != null)
-        {
-            Debug.Log(hitleft.collider.name);
-            LeftCollision = true;
-            
-        }
-        else
-        {
-            LeftCollision = false;
-        }
-        if (hitright.collider != null)
-        {
-            Debug.Log(hitright.collider.name);
-            RightCollision = true;
-        }
-        else
-        {
-            RightCollision = false;
-        }
     }
 
-    private void FixedUpdate()
-    {
-        
-    }
-
-    private void ProcessMovement()
+    private void Movement()
     {
         if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isMoving)
         {
@@ -109,32 +115,43 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
     private IEnumerator MovePlayer(Vector3 direction, int height)
     {
-        isMoving = true;
+        isMoving = true;                    
         float elapsedTime = 0;
         origPos = transform.position;
         targetPos = origPos + direction;
 
         while (elapsedTime < timeToMove)
         {
-            //transform.position = Vector3.Lerp(origPos, targetPos, (elapsedTime / timeToMove));
-            transform.position = Parabola(origPos, targetPos, height, (elapsedTime / timeToMove));
+            //transform.position = Vector3.Lerp(origPos, targetPos, (elapsedTime / timeToMove));   // this makes the player move in a straight line
+            transform.position = Parabola(origPos, targetPos, height, (elapsedTime / timeToMove)); // this makes the player move in an parabolic line 
             elapsedTime += Time.deltaTime;
             yield return null;
         }
         transform.position = targetPos;
         isMoving = false;
     }
-
-
     public static Vector2 Parabola(Vector2 start, Vector2 end, float height, float t)
     {
-        Func<float, float> f = x => -4 * height * x * x + 4 * height * x;
+        Func<float, float> f = x => -4 * height * x * x + 4 * height * x; // parabolic ecuation
 
-        var mid = Vector2.Lerp(start, end, t);
+        var mid = Vector2.Lerp(start, end, t);                            // liniar interpolation, used to draw the line from startpos to endpos in time t
 
-        return new Vector2(mid.x, f(t) + Mathf.Lerp(start.y, end.y, t));
+        return new Vector2(mid.x, f(t) + Mathf.Lerp(start.y, end.y, t));  // return the moving behaviour to use in MovePlayer  
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "NumberSquare":
+                Debug.Log("Player stepped on number square");
+                Destroy(collision.gameObject,.5f);
+                break;
+            default:
+                break;
+        }
+    }
+
+
 }
