@@ -14,8 +14,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float timeToMove = 1f;
     public int WinStatus = 0;
     public bool isMoving;
+    public bool firstMove=false;
     private bool LeftCollision;
     private bool RightCollision;
+    private bool playerAlive = true;
     void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
@@ -23,13 +25,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-
         Movement();          // Square Movement
         ProcessCollisions(); // Checks player collision with another square in the x axis
-        if(isMoving)
-        {
-            
-        }
   
         if(WinStatus== 0)
         {
@@ -38,6 +35,10 @@ public class PlayerController : MonoBehaviour
         if (Debug.isDebugBuild)
         {
             RespondToDebugKey();
+        }
+        if (!playerAlive)
+        {
+            Invoke("ResetCurrentLevel",1f);
         }
 
     }
@@ -103,8 +104,9 @@ public class PlayerController : MonoBehaviour
 
     private void Movement()
     {
-        if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isMoving)
+        if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isMoving &&playerAlive)
         {
+            firstMove = true;
             if (!LeftCollision)
             {
                 StartCoroutine(MovePlayer(Vector3.left * 2, 1));
@@ -116,8 +118,9 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !isMoving)
+        if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !isMoving && playerAlive)
         {
+            firstMove = true;
             if (!RightCollision)
             {
                 StartCoroutine(MovePlayer(Vector3.right * 2, 1));
@@ -138,7 +141,6 @@ public class PlayerController : MonoBehaviour
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex);
     }
-
     private IEnumerator MovePlayer(Vector3 direction, float height)
     {
         isMoving = true;
@@ -162,6 +164,18 @@ public class PlayerController : MonoBehaviour
         {
             isMoving = false;
         }
+        if(collision.gameObject.tag == "Liquid")
+        {
+            playerAlive = false;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "GoldCoin")
+        {
+            Destroy(collision.gameObject);
+        }
+
     }
     public static Vector2 Parabola(Vector2 start, Vector2 end, float height, float t)
     {
@@ -185,7 +199,7 @@ public class PlayerController : MonoBehaviour
         int nextSceneIndex = currentSceneIndex + 1;
         if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
         {
-            nextSceneIndex = 0;
+            nextSceneIndex = 1;
         }
         SceneManager.LoadScene(nextSceneIndex);
     }

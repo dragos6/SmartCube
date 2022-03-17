@@ -5,26 +5,22 @@ using UnityEngine;
 public class NumberSquare : MonoBehaviour
 {
     [SerializeField] [Range(0, 5)] int weight = 1;
-    BoxCollider2D boxCollider;
     SpriteRenderer spriteRender;
-    Color colornr5 = new Color(0.952f, 0.929f, 0.788f, 1);
     public PlayerController Player;
     private bool WeightDecreased = false;
-    //public sumOfWeights addedWeight;
 
     private void Start()
     {
       Player.WinStatus += weight;
-      boxCollider = GetComponent<BoxCollider2D>();
       spriteRender = GetComponent<SpriteRenderer>();
     }
     private void Update()
     {
         if (WeightDecreased)
         {
+            
             Player.WinStatus -= 1;
             WeightDecreased = false;
-           // Player.isMoving = true;
 
         }
         
@@ -39,11 +35,17 @@ public class NumberSquare : MonoBehaviour
         {
             if (collision.gameObject.tag == "Player")
             {
-                //Debug.Log("player stepped on top");
-                weight -= 1;
-                WeightDecreased = true;
-            }
+            //Debug.Log("player stepped on top");
+            /*   if (!Player.isMoving)
+               {
+                   weight -= 1;
+               WeightDecreased = true;
+               }*/
+            weight -= 1;
+            WeightDecreased = true;
+
         }
+    }
     void ToggleNumbers()
         {
             foreach(Transform child in gameObject.transform)
