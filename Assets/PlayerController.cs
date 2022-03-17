@@ -1,18 +1,18 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
 
-    
+
     private Vector3 origPos, targetPos;
     private BoxCollider2D boxCollider;
-    
+
     [SerializeField] private LayerMask colliderlayerMask;
     [SerializeField] float timeToMove = 1f;
-    public int sum = 0;
+    public int WinStatus = 0;
     private bool isMoving;
     private bool LeftCollision;
     private bool RightCollision;
@@ -23,9 +23,17 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        
+
         Movement();          // Square Movement
         ProcessCollisions(); // Checks player collision with another square in the x axis
+        if(WinStatus== 0)
+        {
+            LoadNextScene();
+        }
+        if (Debug.isDebugBuild)
+        {
+            RespondToDebugKey();
+        }
 
     }
     private void ProcessCollisions()
@@ -94,11 +102,11 @@ public class PlayerController : MonoBehaviour
         {
             if (!LeftCollision)
             {
-                StartCoroutine(MovePlayer(Vector3.left * 2,1));
+                StartCoroutine(MovePlayer(Vector3.left * 2, 1));
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.left+ Vector3.up) * 2, 3));
+                StartCoroutine(MovePlayer((Vector3.left + Vector3.up) * 2, 3));
             }
 
         }
@@ -111,13 +119,24 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.right+Vector3.up)*2, 3));
+                StartCoroutine(MovePlayer((Vector3.right + Vector3.up) * 2, 3));
             }
         }
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ResetCurrentLevel();
+        }
     }
+
+    private void ResetCurrentLevel()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex);
+    }
+
     private IEnumerator MovePlayer(Vector3 direction, int height)
     {
-        isMoving = true;                    
+        isMoving = true;
         float elapsedTime = 0;
         origPos = transform.position;
         targetPos = origPos + direction;
@@ -140,5 +159,22 @@ public class PlayerController : MonoBehaviour
 
         return new Vector2(mid.x, f(t) + Mathf.Lerp(start.y, end.y, t));  // return the moving behaviour to use in MovePlayer  
     }
-   
+    private void RespondToDebugKey()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextScene();
+        }
+
+    }
+    private void LoadNextScene()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;
+        if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
+        {
+            nextSceneIndex = 0;
+        }
+        SceneManager.LoadScene(nextSceneIndex);
+    }
 }
