@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask colliderlayerMask;
     [SerializeField] float timeToMove = 1f;
     public int WinStatus = 0;
-    private bool isMoving;
+    public bool isMoving;
     private bool LeftCollision;
     private bool RightCollision;
     void Start()
@@ -26,6 +26,11 @@ public class PlayerController : MonoBehaviour
 
         Movement();          // Square Movement
         ProcessCollisions(); // Checks player collision with another square in the x axis
+        if(isMoving)
+        {
+            
+        }
+  
         if(WinStatus== 0)
         {
             LoadNextScene();
@@ -106,7 +111,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.left + Vector3.up) * 2, 3));
+                StartCoroutine(MovePlayer((Vector3.left + Vector3.up) * 2, 1.5f));
             }
 
         }
@@ -119,7 +124,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.right + Vector3.up) * 2, 3));
+                StartCoroutine(MovePlayer((Vector3.right + Vector3.up) * 2, 1.5f));
             }
         }
         if (Input.GetKeyDown(KeyCode.R))
@@ -134,7 +139,7 @@ public class PlayerController : MonoBehaviour
         SceneManager.LoadScene(currentSceneIndex);
     }
 
-    private IEnumerator MovePlayer(Vector3 direction, int height)
+    private IEnumerator MovePlayer(Vector3 direction, float height)
     {
         isMoving = true;
         float elapsedTime = 0;
@@ -149,7 +154,14 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         transform.position = targetPos;
-        isMoving = false;
+        //isMoving = false;
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject)
+        {
+            isMoving = false;
+        }
     }
     public static Vector2 Parabola(Vector2 start, Vector2 end, float height, float t)
     {
@@ -178,3 +190,4 @@ public class PlayerController : MonoBehaviour
         SceneManager.LoadScene(nextSceneIndex);
     }
 }
+

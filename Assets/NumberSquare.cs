@@ -8,13 +8,13 @@ public class NumberSquare : MonoBehaviour
     BoxCollider2D boxCollider;
     SpriteRenderer spriteRender;
     Color colornr5 = new Color(0.952f, 0.929f, 0.788f, 1);
-    public PlayerController TotalSum;
+    public PlayerController Player;
     private bool WeightDecreased = false;
     //public sumOfWeights addedWeight;
 
     private void Start()
     {
-      TotalSum.WinStatus += weight;
+      Player.WinStatus += weight;
       boxCollider = GetComponent<BoxCollider2D>();
       spriteRender = GetComponent<SpriteRenderer>();
     }
@@ -22,13 +22,16 @@ public class NumberSquare : MonoBehaviour
     {
         if (WeightDecreased)
         {
-            TotalSum.WinStatus -= 1;
+            Player.WinStatus -= 1;
             WeightDecreased = false;
+           // Player.isMoving = true;
+
         }
         
         if (weight == 0)
         {
-            Destroy(this.gameObject,0.3f);
+            Destroy(this.gameObject,0.2f);
+            
         }
         ToggleNumbers();
     }
@@ -36,7 +39,7 @@ public class NumberSquare : MonoBehaviour
         {
             if (collision.gameObject.tag == "Player")
             {
-                Debug.Log("player stepped on top");
+                //Debug.Log("player stepped on top");
                 weight -= 1;
                 WeightDecreased = true;
             }
