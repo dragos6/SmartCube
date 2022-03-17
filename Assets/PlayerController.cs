@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.left + Vector3.up) * 2, 1.5f));
+                StartCoroutine(MovePlayer((Vector3.left + Vector3.up) * 2, 2.2f));
             }
 
         }
@@ -127,7 +127,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.right + Vector3.up) * 2, 1.5f));
+                StartCoroutine(MovePlayer((Vector3.right + Vector3.up) * 2, 2.2f));
             }
         }
         if (Input.GetKeyDown(KeyCode.R))

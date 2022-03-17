@@ -6,13 +6,17 @@ public class NumberSquare : MonoBehaviour
 {
     [SerializeField] [Range(0, 5)] int weight = 1;
     SpriteRenderer spriteRender;
+    SpriteRenderer childRender;
     public PlayerController Player;
+    public bool isLocked;
     private bool WeightDecreased = false;
 
     private void Start()
     {
       Player.WinStatus += weight;
-      spriteRender = GetComponent<SpriteRenderer>();
+       spriteRender = GetComponent<SpriteRenderer>();
+       childRender = GetComponentInChildren<SpriteRenderer>();
+       ToggleNumbers();
     }
     private void Update()
     {
@@ -29,18 +33,18 @@ public class NumberSquare : MonoBehaviour
             Destroy(this.gameObject,0.2f);
             
         }
+        /*if (isLocked)
+        {
+            spriteRender.color = new Color(0.925f, 0.858f, 0.294f, 1);
+            ToggleNumbers();
+        }*/
         ToggleNumbers();
+
     }
     void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.tag == "Player")
+            if (collision.gameObject.tag == "Player" && !isLocked)
             {
-            //Debug.Log("player stepped on top");
-            /*   if (!Player.isMoving)
-               {
-                   weight -= 1;
-               WeightDecreased = true;
-               }*/
             weight -= 1;
             WeightDecreased = true;
 
@@ -48,13 +52,13 @@ public class NumberSquare : MonoBehaviour
     }
     void ToggleNumbers()
         {
-            foreach(Transform child in gameObject.transform)
-           
-                if(child.name == "Square_Nr5" && weight==5)
+        foreach (Transform child in gameObject.transform)
+
+                if (child.name == "Square_Nr5" && weight == 5)
                 {
                     child.gameObject.SetActive(enabled);
                     spriteRender.color = new Color(0.952f, 0.929f, 0.788f, 1);
-                }   
+                }
                 else if (child.name == "Square_Nr4" && weight == 4)
                 {
                     child.gameObject.SetActive(enabled);
@@ -75,6 +79,5 @@ public class NumberSquare : MonoBehaviour
                     child.gameObject.SetActive(enabled);
                     spriteRender.color = new Color(1f, 0.767f, 0.705f, 1);
                 }
-
         }
  }
