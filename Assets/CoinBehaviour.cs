@@ -9,8 +9,10 @@ public class CoinBehaviour : MonoBehaviour
 
 	float movementFactor; // 0 for not moved, 1 for fully moved											  
 	Vector2 startingPos;
+	public NumberSquare numberSquare;
 	void Start()
 	{
+		numberSquare.isLocked = true;
 		startingPos = transform.position;
 	}
 
@@ -31,7 +33,7 @@ public class CoinBehaviour : MonoBehaviour
     {
 		if (collision.gameObject.tag == "Player")
         {
-
+			numberSquare.isLocked = false;
         }
     }
 }
