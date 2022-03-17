@@ -9,10 +9,10 @@ public class PlayerController : MonoBehaviour
     
     private Vector3 origPos, targetPos;
     private BoxCollider2D boxCollider;
-
+    
     [SerializeField] private LayerMask colliderlayerMask;
     [SerializeField] float timeToMove = 1f;
-
+    public int sum = 0;
     private bool isMoving;
     private bool LeftCollision;
     private bool RightCollision;
@@ -140,18 +140,5 @@ public class PlayerController : MonoBehaviour
 
         return new Vector2(mid.x, f(t) + Mathf.Lerp(start.y, end.y, t));  // return the moving behaviour to use in MovePlayer  
     }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        switch (collision.gameObject.tag)
-        {
-            case "NumberSquare":
-                Debug.Log("Player stepped on number square");
-                Destroy(collision.gameObject,.5f);
-                break;
-            default:
-                break;
-        }
-    }
-
-
+   
 }
