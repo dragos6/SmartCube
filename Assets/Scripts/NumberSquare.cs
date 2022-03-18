@@ -24,11 +24,13 @@ public class NumberSquare : MonoBehaviour
 
         if (!isLocked)
         {
+            gameObject.tag = "NumberSquare";
             ToggleNumbers();
             //ToggleLocked();
         }
         else
         {
+            gameObject.tag = "Locked";
             ToggleLocked();
         }
         if (WeightDecreased)
@@ -41,7 +43,7 @@ public class NumberSquare : MonoBehaviour
 
         if (weight == 0)
         {
-            Destroy(this.gameObject, 0.2f);
+            Destroy(this.gameObject, 0.5f);
 
         }
         

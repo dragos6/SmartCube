@@ -12,33 +12,46 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private LayerMask colliderlayerMask;
     [SerializeField] float timeToMove = 1f;
+    [SerializeField] AudioClip success;
+    [SerializeField] AudioClip hitnumber;
+    [SerializeField] AudioClip hitlocked;
+    [SerializeField] AudioClip hitnormal;
+    [SerializeField] AudioClip death;
+    [SerializeField] AudioClip coin;
+    [SerializeField] [Range(0f, 1f)] float nextSceneTimer=1;
+    [SerializeField] float playerJumpHeight = 2.2f;
     public int WinStatus = 0;
     public bool isMoving;
     public bool firstMove=false;
     private bool LeftCollision;
     private bool RightCollision;
     private bool playerAlive = true;
+    AudioSource audioSource;
     void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        audioSource = GetComponent<AudioSource>();
     }
+
 
     void Update()
     {
         Movement();          // Square Movement
         ProcessCollisions(); // Checks player collision with another square in the x axis
-  
-        if(WinStatus== 0)
+        if (WinStatus == 0)
         {
-            LoadNextScene();
+            playerAlive = false;
+            Invoke("PlayerTransition", 0.5f);
+            Invoke("LoadNextScene", nextSceneTimer);
+        }
+
+        else if (!playerAlive && WinStatus != 0) 
+        {
+            Invoke("ResetCurrentLevel", nextSceneTimer);
         }
         if (Debug.isDebugBuild)
         {
             RespondToDebugKey();
-        }
-        if (!playerAlive)
-        {
-            Invoke("ResetCurrentLevel",1f);
         }
 
     }
@@ -113,7 +126,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.left + Vector3.up) * 2, 2.2f));
+                StartCoroutine(MovePlayer((Vector3.left + Vector3.up) * 2, playerJumpHeight));
             }
 
         }
@@ -127,7 +140,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.right + Vector3.up) * 2, 2.2f));
+                StartCoroutine(MovePlayer((Vector3.right + Vector3.up) * 2, playerJumpHeight));
             }
         }
         if (Input.GetKeyDown(KeyCode.R))
@@ -164,18 +177,37 @@ public class PlayerController : MonoBehaviour
         {
             isMoving = false;
         }
+        
         if(collision.gameObject.tag == "Liquid")
         {
+            audioSource.Stop();
+            audioSource.PlayOneShot(death);
             playerAlive = false;
+            Invoke("ResetCurrentLevel",1f);
+        }
+        else if (collision.gameObject.tag == "Friendly" && firstMove && !isMoving)
+        {
+            audioSource.PlayOneShot(hitnormal);
+        }
+        else if (collision.gameObject.tag == "NumberSquare" && firstMove)
+        {
+            audioSource.Stop();
+            audioSource.PlayOneShot(hitnumber);
+        }
+        else if (collision.gameObject.tag == "Locked")
+        {
+            audioSource.Stop();
+            audioSource.PlayOneShot(hitlocked);
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "GoldCoin")
         {
+            audioSource.Stop();
+            audioSource.PlayOneShot(coin);
             Destroy(collision.gameObject);
         }
-
     }
     public static Vector2 Parabola(Vector2 start, Vector2 end, float height, float t)
     {
@@ -202,6 +234,10 @@ public class PlayerController : MonoBehaviour
             nextSceneIndex = 1;
         }
         SceneManager.LoadScene(nextSceneIndex);
+    }
+    private void PlayerTransition()
+    {  
+       gameObject.SetActive(false);
     }
 }
 

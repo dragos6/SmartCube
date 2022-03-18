@@ -8,6 +8,7 @@ TagManager:
   - NumberSquare
   - Liquid
   - GoldCoin
+  - Locked
   layers:
   - Default
   - TransparentFX
