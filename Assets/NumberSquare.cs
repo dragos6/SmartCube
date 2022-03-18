@@ -49,7 +49,7 @@ public class NumberSquare : MonoBehaviour
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Player" && !isLocked)
+        if (collision.gameObject.tag == "Player" && !isLocked && Player.firstMove)
         {
             weight -= 1;
             WeightDecreased = true;
@@ -87,7 +87,6 @@ public class NumberSquare : MonoBehaviour
     }
     void ToggleLocked()
     {
-        //foreach (Transform child in gameObject.transform)
         spriteRender.color = new Color(0.925f, 0.858f, 0.294f, 1);
     }
 }

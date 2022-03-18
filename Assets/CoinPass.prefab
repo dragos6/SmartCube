@@ -108,7 +108,7 @@ Transform:
   m_GameObject: {fileID: 5810034801839758067}
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 3.5, y: -0.58333325, z: 0}
-  m_LocalScale: {x: 0.16666667, y: 6, z: 1}
+  m_LocalScale: {x: 0.16666667, y: 8, z: 1}
   m_Children: []
   m_Father: {fileID: 8734279696568758946}
   m_RootOrder: 0
@@ -175,9 +175,10 @@ GameObject:
   - component: {fileID: 8734279696568758946}
   - component: {fileID: 7158222620983314987}
   - component: {fileID: 591345739054031959}
+  - component: {fileID: 285576025}
   m_Layer: 0
   m_Name: CoinPass
-  m_TagString: Untagged
+  m_TagString: GoldCoin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -260,7 +261,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 3.520092, y: 0.000000059604645}
@@ -276,6 +277,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 8.040184, y: 1.3318602}
   m_EdgeRadius: 0
+--- !u!114 &285576025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5910245551223262464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3093328e5cc59ba43beea8244f37f7f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movementVector: {x: 0, y: 0.3}
+  period: 1
+  numberSquare: {fileID: 0}
 --- !u!1 &7447127676820439872
 GameObject:
   m_ObjectHideFlags: 0
@@ -302,7 +318,7 @@ Transform:
   m_GameObject: {fileID: 7447127676820439872}
   m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 3.5, y: 0.58333355, z: 0}
-  m_LocalScale: {x: 0.16666667, y: 6, z: 1}
+  m_LocalScale: {x: 0.16666667, y: 8, z: 1}
   m_Children: []
   m_Father: {fileID: 8734279696568758946}
   m_RootOrder: 1
