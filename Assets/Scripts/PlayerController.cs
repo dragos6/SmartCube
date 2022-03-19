@@ -20,28 +20,47 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip coin;
     [SerializeField] [Range(0f, 1f)] float nextSceneTimer = 1f;
     [SerializeField] float playerJumpHeight = 2.2f;
-    //[SerializeField] ParticleSystem playerTrail;
+    [SerializeField] ParticleSystem playerTrail;
     public int WinStatus = 0;
     public bool isMoving;
     public bool firstMove = false;
+    public bool hitNumber = false;
     private bool LeftCollision;
     private bool RightCollision;
     private bool playerAlive = true;
     private bool isMovingArc;
-    public bool hitNumber = false;
+    private bool debugKeyPressed = false;
+    
     AudioSource audioSource;
     void Start()
     {
         boxCollider = GetComponent<BoxCollider2D>();
         audioSource = GetComponent<AudioSource>();
+        Debug.Log(SceneManager.GetActiveScene().buildIndex);
     }
 
     void Update()
     {
         Movement();          // Square Movement
+        UpdatePlayerTrail();
         CastCollisionRays(); // Checks player collision with another square in the x axis
         GameFlow();
+        
 
+    }
+
+    private void UpdatePlayerTrail()
+    {
+        if (isMoving)
+        {
+            Debug.Log("Player trail is on");
+            playerTrail.Play();
+        }
+        else
+        {
+            Debug.Log("Player trail is off");
+            playerTrail.Stop();
+        }
     }
 
     //Input
@@ -49,7 +68,6 @@ public class PlayerController : MonoBehaviour
     {
         if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isMoving && playerAlive)
         {
-            //firstMove = true;
             if (!LeftCollision)
             {
                 StartCoroutine(MovePlayer(Vector3.left * 2, 1));
@@ -63,7 +81,6 @@ public class PlayerController : MonoBehaviour
 
         if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !isMoving && playerAlive)
         {
-           // firstMove = true;
             if (!RightCollision)
             {
                 StartCoroutine(MovePlayer(Vector3.right * 2, 1));
@@ -232,24 +249,21 @@ public class PlayerController : MonoBehaviour
     }
     private void LoadNextScene()
     {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        int nextSceneIndex = currentSceneIndex + 1;
-        int endScreen = SceneManager.sceneCountInBuildSettings;
-        if (nextSceneIndex == SceneManager.sceneCountInBuildSettings -1)
-        {
-            nextSceneIndex = 1;
-        }
-        SceneManager.LoadScene(nextSceneIndex);
+     
+            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            int nextSceneIndex = currentSceneIndex + 1;
+            Debug.Log(SceneManager.sceneCountInBuildSettings);
+            if (nextSceneIndex == SceneManager.sceneCountInBuildSettings -2 && debugKeyPressed)
+            {
+                nextSceneIndex = 1;
+            }
+            SceneManager.LoadScene(nextSceneIndex);
     }
     private void LoadLastScene()
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex - 1;
         int lastGameSceneIndex = SceneManager.sceneCountInBuildSettings - 2;
-        Debug.Log(currentSceneIndex);  
-        Debug.Log(nextSceneIndex); 
-        Debug.Log(lastGameSceneIndex);
-
         if (nextSceneIndex == 0)
         {
             nextSceneIndex = lastGameSceneIndex;
@@ -298,6 +312,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.L))
         {
+            debugKeyPressed = true;
             LoadNextScene();
         }
         if (Input.GetKeyDown(KeyCode.K))

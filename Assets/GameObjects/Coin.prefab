@@ -177,7 +177,7 @@ GameObject:
   - component: {fileID: 591345739054031959}
   - component: {fileID: 285576025}
   m_Layer: 0
-  m_Name: CoinPass
+  m_Name: Coin
   m_TagString: GoldCoin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

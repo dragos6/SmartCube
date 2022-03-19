@@ -57,7 +57,7 @@ public class NumberSquare : MonoBehaviour
         if(gameObject.name == Player.thisSquare)
         {
             Player.hitNumber = false;
-            ActiveChild.SetActive(false);
+           // ActiveChild.SetActive(false);
             weight -= 1;
             Player.WinStatus -= 1;
             particleSystem.startColor = spriteRender.color;
@@ -104,6 +104,7 @@ public class NumberSquare : MonoBehaviour
                 break;
 
             case 5:
+                Debug.Log("Hi");
                 Nr5Sprite.SetActive(true);
                 spriteRender.color = new Color(0.952f, 0.929f, 0.788f, 1);//243 237 201
                 Nr5Sprite.GetComponent<SpriteRenderer>().color = new Color(0.952f, 0.929f, 0.788f, 1);
@@ -116,7 +117,7 @@ public class NumberSquare : MonoBehaviour
     {
         gameObject.tag = "Locked";
         spriteRender.color = new Color(0.925f, 0.858f, 0.294f, 1);//149 143 137
-        ActiveChild.GetComponent<SpriteRenderer>().color = new Color(0.584f, 0.560f, 0.537f);//236 219 75
+        ActiveChild.GetComponent<SpriteRenderer>().color = new Color(0.482f, 0.482f, 0.482f);//123 123 123
     }
 
     private void InitializeChildrenSprites()
@@ -127,7 +128,6 @@ public class NumberSquare : MonoBehaviour
         Nr4Sprite = transform.GetChild(3).gameObject;
         Nr5Sprite = transform.GetChild(4).gameObject;
     }
-
     private void GetActiveChild()
     {
 
