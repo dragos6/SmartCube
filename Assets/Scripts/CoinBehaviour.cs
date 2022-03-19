@@ -6,7 +6,6 @@ public class CoinBehaviour : MonoBehaviour
 {
 	[SerializeField] Vector2 movementVector = new Vector3(10f, 10f);
 	[SerializeField] float period = 2f;
-
 	float movementFactor; // 0 for not moved, 1 for fully moved											  
 	Vector2 startingPos;
 	public NumberSquare numberSquare;

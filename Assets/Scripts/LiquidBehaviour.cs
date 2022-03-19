@@ -4,42 +4,34 @@ using UnityEngine;
 
 public class LiquidBehaviour : MonoBehaviour
 {
-    private bool shouldLerp = false;
+    [SerializeField] PlayerController player;
+    [SerializeField] float timeToMove;
 
-    public float lerpTime;
-    public float timeStartedLerping;
-    public Vector2 endPosition;
-    private Vector2 startPosition;
-    public PlayerController Player;
+    private Vector2 targetPos, origPos;
+    private int distance = 20;
+    private bool keepRepeating = true;
 
-    private void StartLerping()
-    {
-        timeStartedLerping = Time.time;
-        startPosition = transform.position;
-        
-
-
-    }
-    private void Start()
-    {
-        StartLerping();
-        
-    }
     private void Update()
     {
-        if (Player.firstMove)
+        if (player.firstMove && keepRepeating)
         {
-            Debug.Log("PLAYER MOVED");
-            
-            transform.position = Lerp(startPosition, endPosition, timeStartedLerping, lerpTime);
-        }       
+            keepRepeating= false;           // to call it only once in update :(
+            StartCoroutine(MoveLiquid());
+        }
     }
-
-    public Vector3 Lerp(Vector3 start, Vector3 end, float timeStartedLerping, float lerpTime=1)
+    private IEnumerator MoveLiquid()
     {
-        float timeSinceStarted = Time.time - timeStartedLerping;
-        float percentageComplete = timeSinceStarted / lerpTime;
-        var result = Vector3.Lerp(start, end, percentageComplete);
-        return result;
+
+        float elapsedTime = 0;
+        origPos = transform.position;
+        targetPos = new Vector2(transform.position.x ,transform.position.y + distance);
+
+        while (elapsedTime < timeToMove)
+        {
+            transform.position = Vector3.Lerp(origPos, targetPos, (elapsedTime / timeToMove));   // this makes the liquid move -> a straight line
+            elapsedTime += Time.deltaTime;                                                         // for a set period of time 
+            yield return null;
+        }
+        transform.position = targetPos;
     }
 }

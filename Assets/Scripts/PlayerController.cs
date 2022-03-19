@@ -11,14 +11,14 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D boxCollider;
 
     [SerializeField] private LayerMask colliderlayerMask;
-    [SerializeField] float timeToMove = 1f;
+    [SerializeField] float timeToMove = 0.5f;
     [SerializeField] AudioClip success;
     [SerializeField] AudioClip hitnumber;
     [SerializeField] AudioClip hitlocked;
     [SerializeField] AudioClip hitnormal;
     [SerializeField] AudioClip death;
     [SerializeField] AudioClip coin;
-    [SerializeField] [Range(0f, 1f)] float nextSceneTimer = 1;
+    [SerializeField] [Range(0f, 1f)] float nextSceneTimer = 1f;
     [SerializeField] float playerJumpHeight = 2.2f;
     public int WinStatus = 0;
     public bool isMoving;
@@ -34,108 +34,15 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-
     void Update()
     {
         Movement();          // Square Movement
         ProcessCollisions(); // Checks player collision with another square in the x axis
-        if (WinStatus == 0)
-        {
-            playerAlive = false;
-            Invoke("PlayerTransition", 0.5f);
-            Invoke("LoadNextScene", nextSceneTimer);
-        }
-
-        else if (!playerAlive && WinStatus != 0)
-        {
-            Invoke("ResetCurrentLevel", nextSceneTimer);
-        }
-        if (Debug.isDebugBuild)
-        {
-            RespondToDebugKey();
-        }
+        GameFlow();
 
     }
-    private void ProcessCollisions()
-    {
-        float extraLenght = .1f;
-        RaycastHit2D hitleft = Physics2D.Raycast(boxCollider.bounds.center, Vector2.left, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
-        // draws a Ray to check for collisions left side of the player
-        RaycastHit2D hitright = Physics2D.Raycast(boxCollider.bounds.center, Vector2.right, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
-        // draws a Ray to check for collisions right side of the player
-        RaycastHit2D hitdown = Physics2D.Raycast(boxCollider.bounds.center, Vector2.down, (boxCollider.bounds.extents.y +.1f), colliderlayerMask);
-        Color rayColorLeft;
-        Color rayColorRight;
-        if (hitdown.collider != null && !isMovingArc)
-        {
-            isMoving = false;
-        }
-      else
-        {
-            isMoving = true;
-        }
-        if (hitdown.collider != null)
-        {
-            rayColorLeft = Color.green;
-        }
-        else
-        {
-            rayColorLeft = Color.red;
-        }
-        Debug.DrawRay(transform.position, Vector2.down * (boxCollider.bounds.extents.y+.1f), rayColorLeft);
 
-
-        ColorRays(extraLenght, ref hitleft, ref hitright, out rayColorLeft, out rayColorRight);
-        CheckRayCollisions(hitleft, hitright);
-    }
-
-    private void CheckRayCollisions(RaycastHit2D hitleft, RaycastHit2D hitright)
-    {
-        if (hitleft.collider != null)
-        {
-            Debug.Log(hitleft.collider.name);
-            LeftCollision = true;
-
-        }
-        else
-        {
-            LeftCollision = false;
-        }
-        if (hitright.collider != null)
-        {
-            Debug.Log(hitright.collider.name);
-            RightCollision = true;
-        }
-        else
-        {
-            RightCollision = false;
-        }
-    }
-
-    private void ColorRays(float extraLenght, ref RaycastHit2D hitleft, ref RaycastHit2D hitright, out Color rayColorLeft, out Color rayColorRight)
-    {
-        if (hitleft.collider != null)
-        {
-            rayColorLeft = Color.green;
-        }
-        else
-        {
-            rayColorLeft = Color.red;
-        }
-
-        if (hitright.collider != null)
-        {
-            rayColorRight = Color.green;
-        }
-        else
-        {
-            rayColorRight = Color.red;
-        }
-
-        Debug.DrawRay(transform.position, Vector2.left * (boxCollider.bounds.extents.x + extraLenght) * 2, rayColorLeft);
-        Debug.DrawRay(transform.position, Vector2.right * (boxCollider.bounds.extents.x + extraLenght) * 2, rayColorRight);
-    }
-
+    //Input
     private void Movement()
     {
         if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isMoving && playerAlive)
@@ -164,24 +71,16 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(MovePlayer((Vector3.right + Vector3.up) * 2, playerJumpHeight));
             }
         }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            ResetCurrentLevel();
-        }
-    }
 
-    private void ResetCurrentLevel()
-    {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(currentSceneIndex);
     }
+    //Movement
     private IEnumerator MovePlayer(Vector3 direction, float height)
     {
-        isMoving = true;
-        isMovingArc = true;
+        isMoving = true; // this checks if player is affected by gravity, will turn false if player touch the ground
+        isMovingArc = true;// this checks if player is on his parabolic movement
         float elapsedTime = 0;
         origPos = transform.position;
-        targetPos = origPos + direction;
+        targetPos = origPos + direction;// his fixed move location of 1 step at a time 
 
         while (elapsedTime < timeToMove)
         {
@@ -191,11 +90,11 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         transform.position = targetPos;
-        isMovingArc = false;
+        isMovingArc = false; // player finished his parabolic movement
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject)
+        if (collision.gameObject) 
         {
             isMoving = false;
         }
@@ -239,13 +138,91 @@ public class PlayerController : MonoBehaviour
 
         return new Vector2(mid.x, f(t) + Mathf.Lerp(start.y, end.y, t));  // return the moving behaviour to use in MovePlayer  
     }
-    private void RespondToDebugKey()
+
+    //Raycast
+    private void ProcessCollisions()
     {
-        if (Input.GetKeyDown(KeyCode.L))
+        float extraLenght = .1f;
+        RaycastHit2D hitleft = Physics2D.Raycast(boxCollider.bounds.center, Vector2.left, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
+        // draws a Ray to check for collisions left side of the player
+        RaycastHit2D hitright = Physics2D.Raycast(boxCollider.bounds.center, Vector2.right, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
+        // draws a Ray to check for collisions right side of the player
+        RaycastHit2D hitdown = Physics2D.Raycast(boxCollider.bounds.center, Vector2.down, (boxCollider.bounds.extents.y + .1f), colliderlayerMask);
+        //Color rayColorLeft;
+        Color rayColor;
+        if (hitdown.collider != null && !isMovingArc)       // player can only move if he is touching the ground
         {
-            LoadNextScene();
+            isMoving = false;
+        }
+        else
+        {
+            isMoving = true;
+        }
+        if (hitdown.collider != null)
+        {
+            rayColor = Color.green;
+        }
+        else
+        {
+            rayColor = Color.red;
+        }
+        Debug.DrawRay(transform.position, Vector2.down * (boxCollider.bounds.extents.y + .1f), rayColor);
+
+
+        ColorRays(extraLenght, ref hitleft, ref hitright, out rayColor);
+        CheckRayCollisions(hitleft, hitright);
+    }
+    private void CheckRayCollisions(RaycastHit2D hitleft, RaycastHit2D hitright)
+    {
+        if (hitleft.collider != null)
+        {
+            LeftCollision = true;
+        }
+        else
+        {
+            LeftCollision = false;
+        }
+        if (hitright.collider != null)
+        {
+            RightCollision = true;
+        }
+        else
+        {
+            RightCollision = false;
+        }
+    }
+    // Scene related
+    private void GameFlow()
+    {
+        if (WinStatus == 0)  // total sum of blocks in a certain level, if it's 0 pass to next level
+        {
+            GoToNextLevel();
         }
 
+        else if (!playerAlive && WinStatus != 0) // if player falls or steps in liquid
+        {
+            Invoke("ResetCurrentLevel", nextSceneTimer);
+        }
+        if (Debug.isDebugBuild)
+        {
+            RespondToDebugKey();                // only in dev builds you can press L for instantly going to next level 
+        }
+        if (Input.GetKeyDown(KeyCode.R))        // restart level by pressing R
+        {
+            ResetCurrentLevel();
+        }
+    }
+
+    private void GoToNextLevel()
+    {
+        playerAlive = false;        //disable movement
+        Invoke("PlayerTransition", 0.5f);
+        Invoke("LoadNextScene", nextSceneTimer);
+    }
+    private void ResetCurrentLevel()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIndex);
     }
     private void LoadNextScene()
     {
@@ -260,5 +237,38 @@ public class PlayerController : MonoBehaviour
     private void PlayerTransition()
     {
         gameObject.SetActive(false);
+    }
+
+    //Developer only
+    private void ColorRays(float extraLenght, ref RaycastHit2D hitleft, ref RaycastHit2D hitright, out Color rayColor)
+    {
+        if (hitleft.collider != null)
+        {
+            rayColor = Color.green;
+        }
+        else
+        {
+            rayColor = Color.red;
+        }
+
+        if (hitright.collider != null)
+        {
+            rayColor = Color.green;
+        }
+        else
+        {
+            rayColor = Color.red;
+        }
+
+        Debug.DrawRay(transform.position, Vector2.left * (boxCollider.bounds.extents.x + extraLenght) * 2, rayColor);
+        Debug.DrawRay(transform.position, Vector2.right * (boxCollider.bounds.extents.x + extraLenght) * 2, rayColor);
+    }       // this draws the Horizontal rays in debugger mode 
+    private void RespondToDebugKey()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextScene();
+        }
+
     }
 }

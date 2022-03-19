@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7211153713133405872}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.11, y: -14.82, z: 0}
+  m_LocalPosition: {x: -1, y: -13, z: 0}
   m_LocalScale: {x: 35, y: 25, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -122,7 +122,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09d55753158ae6447865c5485362cad9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lerpTime: 120
-  timeStartedLerping: 0
-  endPosition: {x: -3, y: 20}
-  Player: {fileID: 0}
+  player: {fileID: 0}
+  timeToMove: 60
