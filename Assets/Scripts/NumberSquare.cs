@@ -12,7 +12,7 @@ public class NumberSquare : MonoBehaviour
     public bool isLocked;
     public GameObject Nr1Sprite, Nr2Sprite, Nr3Sprite, Nr4Sprite, Nr5Sprite, ActiveChild;
 
-    private bool WeightDecreased = false;
+    //private bool WeightDecreased = false;
     
     private void Start()
     {
@@ -26,7 +26,6 @@ public class NumberSquare : MonoBehaviour
         GetActiveChild();
 
     }
-
     private void Update()
     {
 
@@ -39,12 +38,12 @@ public class NumberSquare : MonoBehaviour
             
             ToggleLocked();     // turns number gray and border yellow if locked
         }
-        if (Player.hitNumber)
-        {
-            
+ 
+         if ( Player.hitNumber && !Player.isMoving)
+         {
+            Debug.Log("functie");
             DecreaseSquareWeight();         // decrease value on square and value of total sum by 1
-
-        }
+         }
 
         if (weight == 0)
         {
@@ -53,41 +52,27 @@ public class NumberSquare : MonoBehaviour
 
 
     }
-
     private void DecreaseSquareWeight()
     {
-
-       
-        //weight -= 1;
-        //Player.thisSquare
         if(gameObject.name == Player.thisSquare)
         {
             Player.hitNumber = false;
             ActiveChild.SetActive(false);
             weight -= 1;
             Player.WinStatus -= 1;
-            WeightDecreased = false;
+            //WeightDecreased = false;
         }
-
     }
-
+  /*  private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if*()
+    }*/
     private void DestroySquare()
     {
         spriteRender.enabled = false;                   //first we disable the render so the hitbox will linger for a while 
         Nr1Sprite.SetActive(false);                     //player can still move for one second off the block if he is fast enough
         Destroy(gameObject, DestroyDelay);  
     }
-
-   /* void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player" && !isLocked  && !Player.isMoving && Player.firstMove)
-        {
-            Debug.Log("collided with player");
-            
-            DecreaseSquareWeight();
-            //WeightDecreased = true;
-        }
-    }*/
     void ToggleNumbers()
     {
         gameObject.tag = "NumberSquare";

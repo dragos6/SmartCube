@@ -109,12 +109,12 @@ public class PlayerController : MonoBehaviour
             playerAlive = false;
             Invoke("ResetCurrentLevel", 1f);
         }
-        else if (collision.gameObject.tag == "Friendly" && firstMove && !isMoving)
+        else if (collision.gameObject.tag == "Friendly" && firstMove && !isMovingArc)
         {
             audioSource.PlayOneShot(hitnormal);
             
         }
-        else if (collision.gameObject.tag == "NumberSquare" && firstMove)
+        else if (collision.gameObject.tag == "NumberSquare" && firstMove && !isMovingArc)  // if player hits a square above it doesnt interact neither call for it when spawns on top
         {
             hitNumber = true;
             thisSquare = collision.gameObject.name;
@@ -212,6 +212,10 @@ public class PlayerController : MonoBehaviour
         {
             ResetCurrentLevel();
         }
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     private void GoToNextLevel()
@@ -229,7 +233,8 @@ public class PlayerController : MonoBehaviour
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex + 1;
-        if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
+        int endScreen = SceneManager.sceneCountInBuildSettings;
+        if (nextSceneIndex == SceneManager.sceneCountInBuildSettings -1)
         {
             nextSceneIndex = 1;
         }
@@ -241,7 +246,7 @@ public class PlayerController : MonoBehaviour
         int nextSceneIndex = currentSceneIndex - 1;
         if (nextSceneIndex == 0)
         {
-            nextSceneIndex = 1;
+            nextSceneIndex = SceneManager.sceneCountInBuildSettings - 1;
         }
         SceneManager.LoadScene(nextSceneIndex);
     }
