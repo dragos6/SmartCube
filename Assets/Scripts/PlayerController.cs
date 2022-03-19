@@ -18,14 +18,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip hitnormal;
     [SerializeField] AudioClip death;
     [SerializeField] AudioClip coin;
-    [SerializeField] [Range(0f, 1f)] float nextSceneTimer=1;
+    [SerializeField] [Range(0f, 1f)] float nextSceneTimer = 1;
     [SerializeField] float playerJumpHeight = 2.2f;
     public int WinStatus = 0;
     public bool isMoving;
-    public bool firstMove=false;
+    public bool firstMove = false;
     private bool LeftCollision;
     private bool RightCollision;
     private bool playerAlive = true;
+    private bool isMovingArc;
     AudioSource audioSource;
     void Start()
     {
@@ -45,7 +46,7 @@ public class PlayerController : MonoBehaviour
             Invoke("LoadNextScene", nextSceneTimer);
         }
 
-        else if (!playerAlive && WinStatus != 0) 
+        else if (!playerAlive && WinStatus != 0)
         {
             Invoke("ResetCurrentLevel", nextSceneTimer);
         }
@@ -58,12 +59,32 @@ public class PlayerController : MonoBehaviour
     private void ProcessCollisions()
     {
         float extraLenght = .1f;
-        RaycastHit2D hitleft = Physics2D.Raycast(boxCollider.bounds.center, Vector2.left, (boxCollider.bounds.extents.y + extraLenght) * 3, colliderlayerMask);
+        RaycastHit2D hitleft = Physics2D.Raycast(boxCollider.bounds.center, Vector2.left, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
         // draws a Ray to check for collisions left side of the player
-        RaycastHit2D hitright = Physics2D.Raycast(boxCollider.bounds.center, Vector2.right, (boxCollider.bounds.extents.y + extraLenght) * 3, colliderlayerMask);
+        RaycastHit2D hitright = Physics2D.Raycast(boxCollider.bounds.center, Vector2.right, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
         // draws a Ray to check for collisions right side of the player
+        RaycastHit2D hitdown = Physics2D.Raycast(boxCollider.bounds.center, Vector2.down, (boxCollider.bounds.extents.y +.1f), colliderlayerMask);
         Color rayColorLeft;
         Color rayColorRight;
+        if (hitdown.collider != null && !isMovingArc)
+        {
+            isMoving = false;
+        }
+      else
+        {
+            isMoving = true;
+        }
+        if (hitdown.collider != null)
+        {
+            rayColorLeft = Color.green;
+        }
+        else
+        {
+            rayColorLeft = Color.red;
+        }
+        Debug.DrawRay(transform.position, Vector2.down * (boxCollider.bounds.extents.y+.1f), rayColorLeft);
+
+
         ColorRays(extraLenght, ref hitleft, ref hitright, out rayColorLeft, out rayColorRight);
         CheckRayCollisions(hitleft, hitright);
     }
@@ -95,11 +116,11 @@ public class PlayerController : MonoBehaviour
     {
         if (hitleft.collider != null)
         {
-            rayColorLeft = Color.yellow;
+            rayColorLeft = Color.green;
         }
         else
         {
-            rayColorLeft = Color.cyan;
+            rayColorLeft = Color.red;
         }
 
         if (hitright.collider != null)
@@ -111,13 +132,13 @@ public class PlayerController : MonoBehaviour
             rayColorRight = Color.red;
         }
 
-        Debug.DrawRay(transform.position, Vector2.left * (boxCollider.bounds.extents.y + extraLenght) * 2, rayColorLeft);
-        Debug.DrawRay(transform.position, Vector2.right * (boxCollider.bounds.extents.y + extraLenght) * 2, rayColorRight);
+        Debug.DrawRay(transform.position, Vector2.left * (boxCollider.bounds.extents.x + extraLenght) * 2, rayColorLeft);
+        Debug.DrawRay(transform.position, Vector2.right * (boxCollider.bounds.extents.x + extraLenght) * 2, rayColorRight);
     }
 
     private void Movement()
     {
-        if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isMoving &&playerAlive)
+        if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isMoving && playerAlive)
         {
             firstMove = true;
             if (!LeftCollision)
@@ -157,6 +178,7 @@ public class PlayerController : MonoBehaviour
     private IEnumerator MovePlayer(Vector3 direction, float height)
     {
         isMoving = true;
+        isMovingArc = true;
         float elapsedTime = 0;
         origPos = transform.position;
         targetPos = origPos + direction;
@@ -169,7 +191,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         transform.position = targetPos;
-        //isMoving = false;
+        isMovingArc = false;
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -177,13 +199,13 @@ public class PlayerController : MonoBehaviour
         {
             isMoving = false;
         }
-        
-        if(collision.gameObject.tag == "Liquid")
+
+        if (collision.gameObject.tag == "Liquid")
         {
             audioSource.Stop();
             audioSource.PlayOneShot(death);
             playerAlive = false;
-            Invoke("ResetCurrentLevel",1f);
+            Invoke("ResetCurrentLevel", 1f);
         }
         else if (collision.gameObject.tag == "Friendly" && firstMove && !isMoving)
         {
@@ -194,7 +216,7 @@ public class PlayerController : MonoBehaviour
             audioSource.Stop();
             audioSource.PlayOneShot(hitnumber);
         }
-        else if (collision.gameObject.tag == "Locked")
+        else if (collision.gameObject.tag == "Locked" && firstMove)
         {
             audioSource.Stop();
             audioSource.PlayOneShot(hitlocked);
@@ -236,8 +258,7 @@ public class PlayerController : MonoBehaviour
         SceneManager.LoadScene(nextSceneIndex);
     }
     private void PlayerTransition()
-    {  
-       gameObject.SetActive(false);
+    {
+        gameObject.SetActive(false);
     }
 }
-
