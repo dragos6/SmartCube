@@ -33,6 +33,7 @@ public class CoinBehaviour : MonoBehaviour
 		if (collision.gameObject.tag == "Player")
         {
 			numberSquare.isLocked = false;
-        }
+
+		}
     }
 }

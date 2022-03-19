@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip coin;
     [SerializeField] [Range(0f, 1f)] float nextSceneTimer = 1f;
     [SerializeField] float playerJumpHeight = 2.2f;
+    //[SerializeField] ParticleSystem playerTrail;
     public int WinStatus = 0;
     public bool isMoving;
     public bool firstMove = false;
@@ -160,11 +161,11 @@ public class PlayerController : MonoBehaviour
         Color rayColor;
         if (hitdown.collider != null && !isMovingArc)       // player can only move if he is touching the ground
         {
-
             isMoving = false;
         }
         else
         {
+
             isMoving = true;
         }
         
@@ -244,9 +245,14 @@ public class PlayerController : MonoBehaviour
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex - 1;
+        int lastGameSceneIndex = SceneManager.sceneCountInBuildSettings - 2;
+        Debug.Log(currentSceneIndex);  
+        Debug.Log(nextSceneIndex); 
+        Debug.Log(lastGameSceneIndex);
+
         if (nextSceneIndex == 0)
         {
-            nextSceneIndex = SceneManager.sceneCountInBuildSettings - 1;
+            nextSceneIndex = lastGameSceneIndex;
         }
         SceneManager.LoadScene(nextSceneIndex);
     }

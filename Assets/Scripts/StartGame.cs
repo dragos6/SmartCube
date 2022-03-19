@@ -7,7 +7,6 @@ public class StartGame : MonoBehaviour
     AudioSource audioSource;
     [SerializeField] AudioClip audioClip;
     SpriteRenderer spriteRenderer;
-    float period = 2f;
     // Start is called before the first frame update
     void Start()
     {

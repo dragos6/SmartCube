@@ -11,6 +11,7 @@ public class NumberSquare : MonoBehaviour
     public PlayerController Player;                     // access for isMoving and firstMove
     public bool isLocked;
     public GameObject Nr1Sprite, Nr2Sprite, Nr3Sprite, Nr4Sprite, Nr5Sprite, ActiveChild;
+    public ParticleSystem particleSystem;
 
     //private bool WeightDecreased = false;
     
@@ -24,7 +25,6 @@ public class NumberSquare : MonoBehaviour
         
         ActiveChild = GetComponent<GameObject>();
         GetActiveChild();
-
     }
     private void Update()
     {
@@ -41,7 +41,7 @@ public class NumberSquare : MonoBehaviour
  
          if ( Player.hitNumber && !Player.isMoving)
          {
-            Debug.Log("functie");
+            
             DecreaseSquareWeight();         // decrease value on square and value of total sum by 1
          }
 
@@ -60,13 +60,13 @@ public class NumberSquare : MonoBehaviour
             ActiveChild.SetActive(false);
             weight -= 1;
             Player.WinStatus -= 1;
-            //WeightDecreased = false;
+            particleSystem.startColor = spriteRender.color;
+            particleSystem.Play();
+
+
         }
     }
-  /*  private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if*()
-    }*/
+
     private void DestroySquare()
     {
         spriteRender.enabled = false;                   //first we disable the render so the hitbox will linger for a while 
@@ -82,26 +82,27 @@ public class NumberSquare : MonoBehaviour
                 Nr1Sprite.SetActive(true);
                 Nr2Sprite.SetActive(false);
                 spriteRender.color = new Color(1f, 0.767f, 0.705f, 1);//255 194 180
-                Nr1Sprite.GetComponent<SpriteRenderer>().color = new Color(1f, 0.767f, 0.705f, 1);              // sadly i recolor the sprites 
-                break;                                                                                          // because they remain gray after they get locked
+                Nr1Sprite.GetComponent<SpriteRenderer>().color = new Color(1f, 0.767f, 0.705f, 1);
+                break;                                                                                          
             case 2:
                 Nr2Sprite.SetActive(true);
                 Nr3Sprite.SetActive(false);
                 spriteRender.color = new Color(0.980f, 0.862f, 0.819f, 1);//250 220 209
-                Nr2Sprite.GetComponent<SpriteRenderer>().color = new Color(0.980f, 0.862f, 0.819f, 1); 
+                Nr2Sprite.GetComponent<SpriteRenderer>().color = new Color(0.980f, 0.862f, 0.819f, 1);
                 break;
             case 3:
                 Nr3Sprite.SetActive(true);
                 Nr4Sprite.SetActive(false);
                 spriteRender.color = new Color(0.819f, 0.780f, 0.729f, 1);//209 199 186
-                Nr3Sprite.GetComponent<SpriteRenderer>().color = new Color(0.819f, 0.780f, 0.729f, 1); 
+                Nr3Sprite.GetComponent<SpriteRenderer>().color = new Color(0.819f, 0.780f, 0.729f, 1);
                 break;
             case 4:
                 Nr4Sprite.SetActive(true);
                 Nr5Sprite.SetActive(false);
                 spriteRender.color = new Color(1f, 0.862f, 0.713f, 1);//255 220 182
-                Nr4Sprite.GetComponent<SpriteRenderer>().color = new Color(1f, 0.862f, 0.713f, 1);  
+                Nr4Sprite.GetComponent<SpriteRenderer>().color = new Color(1f, 0.862f, 0.713f, 1);
                 break;
+
             case 5:
                 Nr5Sprite.SetActive(true);
                 spriteRender.color = new Color(0.952f, 0.929f, 0.788f, 1);//243 237 201
@@ -132,7 +133,7 @@ public class NumberSquare : MonoBehaviour
 
         for (int i = 0; i < gameObject.transform.childCount; i++)
         {
-            if (gameObject.transform.GetChild(i).gameObject.activeSelf == true)
+            if (gameObject.transform.GetChild(i).gameObject.activeSelf == true && gameObject.transform.GetChild(i).gameObject.name != "SquareParticles")
             {
                 ActiveChild = transform.GetChild(i).gameObject;
             }
