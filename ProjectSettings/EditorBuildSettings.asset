@@ -5,9 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/Level 21.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
     path: Assets/Scenes/Menu.unity
     guid: dec2ab5ba0ef46e4d80403e1f6ca4166
@@ -71,4 +68,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level 20.unity
     guid: 936d62b553da82f459d9e742c2009258
+  - enabled: 1
+    path: Assets/Scenes/Level 21.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 0
+    path: Assets/Scenes/Sandbox.unity
+    guid: 99abc060ccc1b164a9ac3720348aa123
   m_configObjects: {}

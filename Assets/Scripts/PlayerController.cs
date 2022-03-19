@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 origPos, targetPos;
     private BoxCollider2D boxCollider;
-
+    public string thisSquare;
     [SerializeField] private LayerMask colliderlayerMask;
     [SerializeField] float timeToMove = 0.5f;
     [SerializeField] AudioClip success;
@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     private bool RightCollision;
     private bool playerAlive = true;
     private bool isMovingArc;
+    public bool hitNumber = false;
     AudioSource audioSource;
     void Start()
     {
@@ -37,7 +38,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Movement();          // Square Movement
-        ProcessCollisions(); // Checks player collision with another square in the x axis
+        CastCollisionRays(); // Checks player collision with another square in the x axis
         GameFlow();
 
     }
@@ -47,7 +48,7 @@ public class PlayerController : MonoBehaviour
     {
         if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isMoving && playerAlive)
         {
-            firstMove = true;
+            //firstMove = true;
             if (!LeftCollision)
             {
                 StartCoroutine(MovePlayer(Vector3.left * 2, 1));
@@ -61,7 +62,7 @@ public class PlayerController : MonoBehaviour
 
         if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !isMoving && playerAlive)
         {
-            firstMove = true;
+           // firstMove = true;
             if (!RightCollision)
             {
                 StartCoroutine(MovePlayer(Vector3.right * 2, 1));
@@ -76,8 +77,10 @@ public class PlayerController : MonoBehaviour
     //Movement
     private IEnumerator MovePlayer(Vector3 direction, float height)
     {
+        firstMove = true;// moves for the first time
         isMoving = true; // this checks if player is affected by gravity, will turn false if player touch the ground
         isMovingArc = true;// this checks if player is on his parabolic movement
+        hitNumber = false;
         float elapsedTime = 0;
         origPos = transform.position;
         targetPos = origPos + direction;// his fixed move location of 1 step at a time 
@@ -109,11 +112,16 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.tag == "Friendly" && firstMove && !isMoving)
         {
             audioSource.PlayOneShot(hitnormal);
+            
         }
         else if (collision.gameObject.tag == "NumberSquare" && firstMove)
         {
+            hitNumber = true;
+            thisSquare = collision.gameObject.name;
+
             audioSource.Stop();
             audioSource.PlayOneShot(hitnumber);
+            
         }
         else if (collision.gameObject.tag == "Locked" && firstMove)
         {
@@ -138,11 +146,11 @@ public class PlayerController : MonoBehaviour
 
         return new Vector2(mid.x, f(t) + Mathf.Lerp(start.y, end.y, t));  // return the moving behaviour to use in MovePlayer  
     }
-
     //Raycast
-    private void ProcessCollisions()
+    private void CastCollisionRays()
     {
         float extraLenght = .1f;
+        
         RaycastHit2D hitleft = Physics2D.Raycast(boxCollider.bounds.center, Vector2.left, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
         // draws a Ray to check for collisions left side of the player
         RaycastHit2D hitright = Physics2D.Raycast(boxCollider.bounds.center, Vector2.right, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
@@ -152,27 +160,20 @@ public class PlayerController : MonoBehaviour
         Color rayColor;
         if (hitdown.collider != null && !isMovingArc)       // player can only move if he is touching the ground
         {
+
             isMoving = false;
         }
         else
         {
             isMoving = true;
         }
-        if (hitdown.collider != null)
-        {
-            rayColor = Color.green;
-        }
-        else
-        {
-            rayColor = Color.red;
-        }
-        Debug.DrawRay(transform.position, Vector2.down * (boxCollider.bounds.extents.y + .1f), rayColor);
+        
 
 
-        ColorRays(extraLenght, ref hitleft, ref hitright, out rayColor);
-        CheckRayCollisions(hitleft, hitright);
+        ColorRays(extraLenght, ref hitleft, ref hitright, ref hitdown, out rayColor);
+        CheckHorizontalRayCollisions(hitleft, hitright);
     }
-    private void CheckRayCollisions(RaycastHit2D hitleft, RaycastHit2D hitright)
+    private void CheckHorizontalRayCollisions(RaycastHit2D hitleft, RaycastHit2D hitright)
     {
         if (hitleft.collider != null)
         {
@@ -234,14 +235,33 @@ public class PlayerController : MonoBehaviour
         }
         SceneManager.LoadScene(nextSceneIndex);
     }
+    private void LoadLastScene()
+    {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex - 1;
+        if (nextSceneIndex == 0)
+        {
+            nextSceneIndex = 1;
+        }
+        SceneManager.LoadScene(nextSceneIndex);
+    }
     private void PlayerTransition()
     {
         gameObject.SetActive(false);
     }
 
     //Developer only
-    private void ColorRays(float extraLenght, ref RaycastHit2D hitleft, ref RaycastHit2D hitright, out Color rayColor)
+    private void ColorRays(float extraLenght, ref RaycastHit2D hitleft, ref RaycastHit2D hitright, ref RaycastHit2D hitdown, out Color rayColor)
     {
+        if (hitdown.collider != null)
+        {
+            rayColor = Color.green;
+        }
+        else
+        {
+            rayColor = Color.red;
+        }
+        Debug.DrawRay(transform.position, Vector2.down * (boxCollider.bounds.extents.y +.1f), rayColor);
         if (hitleft.collider != null)
         {
             rayColor = Color.green;
@@ -268,6 +288,10 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.L))
         {
             LoadNextScene();
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            LoadLastScene();
         }
 
     }

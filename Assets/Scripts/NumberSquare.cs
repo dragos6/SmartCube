@@ -39,8 +39,9 @@ public class NumberSquare : MonoBehaviour
             
             ToggleLocked();     // turns number gray and border yellow if locked
         }
-        if (WeightDecreased)
+        if (Player.hitNumber)
         {
+            
             DecreaseSquareWeight();         // decrease value on square and value of total sum by 1
 
         }
@@ -55,9 +56,19 @@ public class NumberSquare : MonoBehaviour
 
     private void DecreaseSquareWeight()
     {
-        ActiveChild.SetActive(false);
-        Player.WinStatus -= 1;
-        WeightDecreased = false;
+
+       
+        //weight -= 1;
+        //Player.thisSquare
+        if(gameObject.name == Player.thisSquare)
+        {
+            Player.hitNumber = false;
+            ActiveChild.SetActive(false);
+            weight -= 1;
+            Player.WinStatus -= 1;
+            WeightDecreased = false;
+        }
+
     }
 
     private void DestroySquare()
@@ -67,14 +78,16 @@ public class NumberSquare : MonoBehaviour
         Destroy(gameObject, DestroyDelay);  
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+   /* void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Player" && !isLocked && Player.firstMove && !Player.isMoving)
+        if (collision.gameObject.tag == "Player" && !isLocked  && !Player.isMoving && Player.firstMove)
         {
-            weight -= 1;
-            WeightDecreased = true;
+            Debug.Log("collided with player");
+            
+            DecreaseSquareWeight();
+            //WeightDecreased = true;
         }
-    }
+    }*/
     void ToggleNumbers()
     {
         gameObject.tag = "NumberSquare";
