@@ -11,7 +11,7 @@ public class NumberSquare : MonoBehaviour
     public PlayerController Player;                     // access for isMoving and firstMove
     public bool isLocked;
     public GameObject Nr1Sprite, Nr2Sprite, Nr3Sprite, Nr4Sprite, Nr5Sprite, ActiveChild;
-    public ParticleSystem particleSystem;
+   [SerializeField] ParticleSystem hitEffect;
 
     //private bool WeightDecreased = false;
     
@@ -60,8 +60,7 @@ public class NumberSquare : MonoBehaviour
            // ActiveChild.SetActive(false);
             weight -= 1;
             Player.WinStatus -= 1;
-            particleSystem.startColor = spriteRender.color;
-            particleSystem.Play();
+            hitEffect.Play();
 
 
         }

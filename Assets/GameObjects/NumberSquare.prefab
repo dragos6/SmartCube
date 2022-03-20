@@ -261,7 +261,7 @@ GameObject:
   - component: {fileID: 483118643}
   m_Layer: 7
   m_Name: NumberSquare
-  m_TagString: Untagged
+  m_TagString: NumberSquare
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -375,7 +375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55a210ab3762d7b4980a510c95a13c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weight: 3
+  weight: 1
   DestroyDelay: 0.4
   Player: {fileID: 0}
   isLocked: 0
@@ -385,7 +385,7 @@ MonoBehaviour:
   Nr4Sprite: {fileID: 5181498538996069319}
   Nr5Sprite: {fileID: 0}
   ActiveChild: {fileID: 0}
-  particleSystem: {fileID: 7707369099361241646}
+  hitEffect: {fileID: 7707369099361241646}
 --- !u!114 &483118643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,7 +411,7 @@ MonoBehaviour:
   - {x: -0.5, y: 0.5, z: 0}
   m_ShapePathHash: 160822549
   m_Mesh: {fileID: 0}
-  m_InstanceId: -280064
+  m_InstanceId: -158014
 --- !u!1 &5181498538938973341
 GameObject:
   m_ObjectHideFlags: 0
@@ -630,6 +630,22 @@ PrefabInstance:
     - target: {fileID: 7707369100101178408, guid: da3bfd96179faee4ca9b3d7e5b3faf0c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7707369100101178410, guid: da3bfd96179faee4ca9b3d7e5b3faf0c, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.a
+      value: 0.5372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 7707369100101178410, guid: da3bfd96179faee4ca9b3d7e5b3faf0c, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.58459413
+      objectReference: {fileID: 0}
+    - target: {fileID: 7707369100101178410, guid: da3bfd96179faee4ca9b3d7e5b3faf0c, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0.58459413
+      objectReference: {fileID: 0}
+    - target: {fileID: 7707369100101178410, guid: da3bfd96179faee4ca9b3d7e5b3faf0c, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.8207547
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: da3bfd96179faee4ca9b3d7e5b3faf0c, type: 3}

@@ -21,8 +21,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] float nextSceneTimer = 1f;
     [SerializeField] float playerJumpHeight = 2.2f;
     [SerializeField] ParticleSystem playerTrail;
-    [SerializeField] ParticleSystem playerTrailrb;
-    [SerializeField] float movementDelay=0.5f;
     public int WinStatus = 0;
     public bool isMoving;
     public bool firstMove = false;
@@ -37,7 +35,6 @@ public class PlayerController : MonoBehaviour
     {
         boxCollider = GetComponent<BoxCollider2D>();
         audioSource = GetComponent<AudioSource>();
-        Debug.Log("restart");
     }
 
     void Update()
@@ -54,26 +51,28 @@ public class PlayerController : MonoBehaviour
     {
         if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isMoving && playerAlive)
         {
+            firstMove = true;// moves for the first time
             if (!LeftCollision)
             {
-                StartCoroutine(MovePlayer(Vector3.left * 2, 1));
+                StartCoroutine(MovePlayer(new Vector3(-1, 0.3f, 0) * 2, 1f));
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.left + Vector3.up) * 2, playerJumpHeight));
+                StartCoroutine(MovePlayer(new Vector3(-1, 0.3f, 0) * 2, playerJumpHeight));
             }
 
         }
 
         if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !isMoving && playerAlive)
         {
+            firstMove = true;// moves for the first time
             if (!RightCollision)
             {
-                StartCoroutine(MovePlayer(Vector3.right * 2, 1));
+                StartCoroutine(MovePlayer(new Vector3(1,0.3f,0) * 2, 1f));
             }
             else
             {
-                StartCoroutine(MovePlayer((Vector3.right + Vector3.up) * 2, playerJumpHeight));
+                StartCoroutine(MovePlayer((new Vector3(1, 1.3f, 0)) * 2, playerJumpHeight));
             }
         }
 
@@ -81,7 +80,7 @@ public class PlayerController : MonoBehaviour
     //Movement
     private IEnumerator MovePlayer(Vector3 direction, float height)
     {
-        firstMove = true;// moves for the first time
+        
         isMoving = true; // this checks if player is affected by gravity, will turn false if player touch the ground
         isMovingArc = true;// this checks if player is on his parabolic movement
         hitNumber = false;
@@ -97,21 +96,18 @@ public class PlayerController : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        transform.position = targetPos;
-        isMovingArc = false; // player finished his parabolic movement
         playerTrail.Stop();
+        transform.position = targetPos;
+        //isMoving = false;
+         isMovingArc = false; // player finished his parabolic movement
+       
     }
-    private IEnumerator DelayAfterMovement()
+    private IEnumerator Delay()
     {
-        yield return new WaitForSeconds(movementDelay);
-        isMoving = false;
+        yield return new WaitForSeconds(.3f);
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject) 
-        {
-            isMoving = false;
-        }
 
         if (collision.gameObject.tag == "Liquid")
         {
@@ -165,24 +161,19 @@ public class PlayerController : MonoBehaviour
         RaycastHit2D hitleft = Physics2D.Raycast(boxCollider.bounds.center, Vector2.left, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
         // draws a Ray to check for collisions left side of the player
         RaycastHit2D hitright = Physics2D.Raycast(boxCollider.bounds.center, Vector2.right, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
-        // draws a Ray to check for collisions right side of the player
-        RaycastHit2D hitdown = Physics2D.Raycast(boxCollider.bounds.center, Vector2.down, (boxCollider.bounds.extents.y + .1f), colliderlayerMask);
-        //Color rayColorLeft;
         Color rayColor;
-
+        // draws a Ray to check for collisions right side of the player
+        RaycastHit2D hitdown = Physics2D.Raycast(boxCollider.bounds.center, Vector2.down, (boxCollider.bounds.extents.y + extraLenght), colliderlayerMask);
         if (hitdown.collider != null && !isMovingArc)       // player can only move if he is touching the ground
         {
             isMoving = false;
         }
         else
         {
-            
+
             isMoving = true;
         }
-        
-
-
-        ColorRays(extraLenght, ref hitleft, ref hitright, ref hitdown, out rayColor);
+        ColorRays(extraLenght, ref hitleft, ref hitright, out rayColor);
         CheckHorizontalRayCollisions(hitleft, hitright);
     }
     private void CheckHorizontalRayCollisions(RaycastHit2D hitleft, RaycastHit2D hitright)
@@ -278,17 +269,9 @@ public class PlayerController : MonoBehaviour
     }
 
     //Developer only
-    private void ColorRays(float extraLenght, ref RaycastHit2D hitleft, ref RaycastHit2D hitright, ref RaycastHit2D hitdown, out Color rayColor)
+    private void ColorRays(float extraLenght, ref RaycastHit2D hitleft, ref RaycastHit2D hitright, out Color rayColor)
     {
-        if (hitdown.collider != null)
-        {
-            rayColor = Color.green;
-        }
-        else
-        {
-            rayColor = Color.red;
-        }
-        Debug.DrawRay(transform.position, Vector2.down * (boxCollider.bounds.extents.y +.1f), rayColor);
+
         if (hitleft.collider != null)
         {
             rayColor = Color.green;
