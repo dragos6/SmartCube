@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] float nextSceneTimer = 1f;
     [SerializeField] float playerJumpHeight = 2.2f;
     [SerializeField] ParticleSystem playerTrail;
+    [SerializeField] float movementDelay=0.5f;
     public int WinStatus = 0;
     public bool isMoving;
     public bool firstMove = false;
@@ -36,32 +37,17 @@ public class PlayerController : MonoBehaviour
     {
         boxCollider = GetComponent<BoxCollider2D>();
         audioSource = GetComponent<AudioSource>();
-        Debug.Log(SceneManager.GetActiveScene().buildIndex);
+        Debug.Log("restart");
     }
 
     void Update()
     {
         Movement();          // Square Movement
-        UpdatePlayerTrail();
         CastCollisionRays(); // Checks player collision with another square in the x axis
         GameFlow();
-        
-
     }
 
-    private void UpdatePlayerTrail()
-    {
-        if (isMoving)
-        {
-            Debug.Log("Player trail is on");
-            playerTrail.Play();
-        }
-        else
-        {
-            Debug.Log("Player trail is off");
-            playerTrail.Stop();
-        }
-    }
+  
 
     //Input
     private void Movement()
@@ -112,6 +98,11 @@ public class PlayerController : MonoBehaviour
         }
         transform.position = targetPos;
         isMovingArc = false; // player finished his parabolic movement
+    }
+    private IEnumerator DelayAfterMovement()
+    {
+        yield return new WaitForSeconds(movementDelay);
+        isMoving = false;
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -176,6 +167,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit2D hitdown = Physics2D.Raycast(boxCollider.bounds.center, Vector2.down, (boxCollider.bounds.extents.y + .1f), colliderlayerMask);
         //Color rayColorLeft;
         Color rayColor;
+
         if (hitdown.collider != null && !isMovingArc)       // player can only move if he is touching the ground
         {
             isMoving = false;
@@ -230,10 +222,15 @@ public class PlayerController : MonoBehaviour
         {
             ResetCurrentLevel();
         }
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKey(KeyCode.Escape))       // close application
         {
             Application.Quit();
         }
+        if (Input.GetKey(KeyCode.M))            // main menu
+        {
+            SceneManager.LoadScene(0);
+        }
+
     }
 
     private void GoToNextLevel()
@@ -250,20 +247,23 @@ public class PlayerController : MonoBehaviour
     private void LoadNextScene()
     {
      
-            int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            int nextSceneIndex = currentSceneIndex + 1;
-            Debug.Log(SceneManager.sceneCountInBuildSettings);
-            if (nextSceneIndex == SceneManager.sceneCountInBuildSettings -2 && debugKeyPressed)
-            {
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentSceneIndex + 1;  
+        if (nextSceneIndex == SceneManager.sceneCountInBuildSettings) //&&
+        {
                 nextSceneIndex = 1;
-            }
+        }
+            else if (debugKeyPressed && nextSceneIndex == SceneManager.sceneCountInBuildSettings -2)
+        {
+            nextSceneIndex = 1;
+        }
             SceneManager.LoadScene(nextSceneIndex);
     }
     private void LoadLastScene()
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex - 1;
-        int lastGameSceneIndex = SceneManager.sceneCountInBuildSettings - 2;
+        int lastGameSceneIndex = SceneManager.sceneCountInBuildSettings - 3;
         if (nextSceneIndex == 0)
         {
             nextSceneIndex = lastGameSceneIndex;
