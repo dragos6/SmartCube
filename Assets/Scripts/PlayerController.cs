@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                StartCoroutine(MovePlayer(new Vector3(-1, 0.3f, 0) * 2, playerJumpHeight));
+                StartCoroutine(MovePlayer(new Vector3(-1, 1.3f, 0) * 2, playerJumpHeight));
             }
 
         }
@@ -101,10 +101,6 @@ public class PlayerController : MonoBehaviour
         //isMoving = false;
          isMovingArc = false; // player finished his parabolic movement
        
-    }
-    private IEnumerator Delay()
-    {
-        yield return new WaitForSeconds(.3f);
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
