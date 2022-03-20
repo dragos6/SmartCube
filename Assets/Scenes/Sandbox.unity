@@ -206,11 +206,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &99546244 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1813096138559119031, guid: 5755644d3068ae64f84856011993a880, type: 3}
-  m_PrefabInstance: {fileID: 919122547}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &173583488
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -397,21 +392,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 986801128, guid: 5755644d3068ae64f84856011993a880, type: 3}
-      propertyPath: playerTrail
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 986801128, guid: 5755644d3068ae64f84856011993a880, type: 3}
-      propertyPath: movementDelay
-      value: 0.5
-      objectReference: {fileID: 0}
     - target: {fileID: 1813096138559119031, guid: 5755644d3068ae64f84856011993a880, type: 3}
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1813096138559119031, guid: 5755644d3068ae64f84856011993a880, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4
+      value: -2
       objectReference: {fileID: 0}
     - target: {fileID: 1813096138559119031, guid: 5755644d3068ae64f84856011993a880, type: 3}
       propertyPath: m_LocalPosition.y
@@ -577,71 +564,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66649e7d199fecb49832f6d80062128b, type: 3}
---- !u!1001 &1204267316
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 99546244}
-    m_Modifications:
-    - target: {fileID: 2498698635670752104, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752104, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: useRigidbodyForVelocity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752106, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2498698635670752109, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
-      propertyPath: m_Name
-      value: playerTrail
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: e0eae09e53c60284c9bea304016ce11d, type: 3}
 --- !u!1001 &1347531406
 PrefabInstance:
   m_ObjectHideFlags: 0

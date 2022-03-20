@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] float nextSceneTimer = 1f;
     [SerializeField] float playerJumpHeight = 2.2f;
     [SerializeField] ParticleSystem playerTrail;
+    [SerializeField] ParticleSystem playerTrailrb;
     [SerializeField] float movementDelay=0.5f;
     public int WinStatus = 0;
     public bool isMoving;
@@ -31,7 +32,6 @@ public class PlayerController : MonoBehaviour
     private bool playerAlive = true;
     private bool isMovingArc;
     private bool debugKeyPressed = false;
-    
     AudioSource audioSource;
     void Start()
     {
@@ -85,6 +85,7 @@ public class PlayerController : MonoBehaviour
         isMoving = true; // this checks if player is affected by gravity, will turn false if player touch the ground
         isMovingArc = true;// this checks if player is on his parabolic movement
         hitNumber = false;
+        playerTrail.Play();
         float elapsedTime = 0;
         origPos = transform.position;
         targetPos = origPos + direction;// his fixed move location of 1 step at a time 
@@ -98,6 +99,7 @@ public class PlayerController : MonoBehaviour
         }
         transform.position = targetPos;
         isMovingArc = false; // player finished his parabolic movement
+        playerTrail.Stop();
     }
     private IEnumerator DelayAfterMovement()
     {
@@ -174,7 +176,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-
+            
             isMoving = true;
         }
         
