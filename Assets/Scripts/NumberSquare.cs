@@ -62,7 +62,6 @@ public class NumberSquare : MonoBehaviour
             Player.WinStatus -= 1;
             hitEffect.Play();
 
-
         }
     }
 

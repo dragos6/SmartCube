@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 public class PlayerController : MonoBehaviour
 {
@@ -44,7 +45,7 @@ public class PlayerController : MonoBehaviour
         GameFlow();
     }
 
-  
+
 
     //Input
     private void Movement()
@@ -54,11 +55,13 @@ public class PlayerController : MonoBehaviour
             firstMove = true;// moves for the first time
             if (!LeftCollision)
             {
-                StartCoroutine(MovePlayer(new Vector3(-1, 0.3f, 0) * 2, 1f));
+                StartCoroutine(MovePlayer(new Vector3(-1, 0, 0) * 2, 1f));
+                WaitForNextMove();
             }
             else
             {
-                StartCoroutine(MovePlayer(new Vector3(-1, 1.3f, 0) * 2, playerJumpHeight));
+                StartCoroutine(MovePlayer(new Vector3(-1, 1f, 0) * 2, playerJumpHeight));
+                WaitForNextMove();
             }
 
         }
@@ -68,11 +71,13 @@ public class PlayerController : MonoBehaviour
             firstMove = true;// moves for the first time
             if (!RightCollision)
             {
-                StartCoroutine(MovePlayer(new Vector3(1,0.3f,0) * 2, 1f));
+                StartCoroutine(MovePlayer(new Vector3(1, 0, 0) * 2, 1f));
+                WaitForNextMove();
             }
             else
             {
-                StartCoroutine(MovePlayer((new Vector3(1, 1.3f, 0)) * 2, playerJumpHeight));
+                StartCoroutine(MovePlayer((new Vector3(1, 1f, 0)) * 2, playerJumpHeight));
+                WaitForNextMove();
             }
         }
 
@@ -80,7 +85,7 @@ public class PlayerController : MonoBehaviour
     //Movement
     private IEnumerator MovePlayer(Vector3 direction, float height)
     {
-        
+
         isMoving = true; // this checks if player is affected by gravity, will turn false if player touch the ground
         isMovingArc = true;// this checks if player is on his parabolic movement
         hitNumber = false;
@@ -91,7 +96,8 @@ public class PlayerController : MonoBehaviour
 
         while (elapsedTime < timeToMove)
         {
-            //transform.position = Vector3.Lerp(origPos, targetPos, (elapsedTime / timeToMove));   // this makes the player move in a straight line
+            // transform.position = Vector3.Lerp(origPos, targetPos, (elapsedTime / timeToMove));   // this makes the player move in a straight line
+            // transform.position = Vector3.Slerp(origPos, targetPos, (elapsedTime / timeToMove));
             transform.position = Parabola(origPos, targetPos, height, (elapsedTime / timeToMove)); // this makes the player move in an parabolic line 
             elapsedTime += Time.deltaTime;
             yield return null;
@@ -99,9 +105,15 @@ public class PlayerController : MonoBehaviour
         playerTrail.Stop();
         transform.position = targetPos;
         //isMoving = false;
-         isMovingArc = false; // player finished his parabolic movement
-       
+        isMovingArc = false; // player finished his parabolic movement
+
     }
+
+    private async Task WaitForNextMove()
+    {
+        await Task.Delay(500);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
 
@@ -115,7 +127,7 @@ public class PlayerController : MonoBehaviour
         else if (collision.gameObject.tag == "Friendly" && firstMove && !isMovingArc)
         {
             audioSource.PlayOneShot(hitnormal);
-            
+
         }
         else if (collision.gameObject.tag == "NumberSquare" && firstMove && !isMovingArc)  // if player hits a square above it doesnt interact neither call for it when spawns on top
         {
@@ -124,7 +136,7 @@ public class PlayerController : MonoBehaviour
 
             audioSource.Stop();
             audioSource.PlayOneShot(hitnumber);
-            
+
         }
         else if (collision.gameObject.tag == "Locked" && firstMove)
         {
@@ -153,13 +165,13 @@ public class PlayerController : MonoBehaviour
     private void CastCollisionRays()
     {
         float extraLenght = .1f;
-        
+
         RaycastHit2D hitleft = Physics2D.Raycast(boxCollider.bounds.center, Vector2.left, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
         // draws a Ray to check for collisions left side of the player
         RaycastHit2D hitright = Physics2D.Raycast(boxCollider.bounds.center, Vector2.right, (boxCollider.bounds.extents.x + extraLenght) * 3, colliderlayerMask);
         Color rayColor;
         // draws a Ray to check for collisions right side of the player
-        RaycastHit2D hitdown = Physics2D.Raycast(boxCollider.bounds.center, Vector2.down, (boxCollider.bounds.extents.y + extraLenght), colliderlayerMask);
+        RaycastHit2D hitdown = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, extraLenght, colliderlayerMask);
         if (hitdown.collider != null && !isMovingArc)       // player can only move if he is touching the ground
         {
             isMoving = false;
@@ -235,18 +247,18 @@ public class PlayerController : MonoBehaviour
     }
     private void LoadNextScene()
     {
-     
+
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        int nextSceneIndex = currentSceneIndex + 1;  
+        int nextSceneIndex = currentSceneIndex + 1;
         if (nextSceneIndex == SceneManager.sceneCountInBuildSettings) //&&
-        {
-                nextSceneIndex = 1;
-        }
-            else if (debugKeyPressed && nextSceneIndex == SceneManager.sceneCountInBuildSettings -2)
         {
             nextSceneIndex = 1;
         }
-            SceneManager.LoadScene(nextSceneIndex);
+        else if (debugKeyPressed && nextSceneIndex == SceneManager.sceneCountInBuildSettings - 2)
+        {
+            nextSceneIndex = 1;
+        }
+        SceneManager.LoadScene(nextSceneIndex);
     }
     private void LoadLastScene()
     {
